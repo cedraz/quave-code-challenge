@@ -5,7 +5,13 @@ const flowbite = require('flowbite-react/tailwind');
 module.exports = {
   content: ['./ui/**/*.{js,jsx,ts,tsx}', './client/*.html', flowbite.content()],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: {
+          quaveColor: '#ce5993',
+        },
+      },
+    },
   },
   plugins: [flowbite.plugin()],
 };

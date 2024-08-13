@@ -1,63 +1,57 @@
 import React from 'react';
-import { Pagination, Table, TextInput } from 'flowbite-react';
-import { DropdownMenu } from './Dropdown';
-import { Meteor } from 'meteor/meteor';
+
 import { format } from 'date-fns';
 
-const PeopleList = ({ people, currentEventId }) => {
+// Components
+import { Pagination, Table, TextInput } from 'flowbite-react';
+import { DropdownMenu } from './OptionsDropdown';
+import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
+
+export const PeopleList = ({ people, handleCheckIn, handleCheckOut }) => {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [currentPage, setCurrentPage] = React.useState(1);
   const itemsPerPage = 10;
 
-  const filteredPeople = people
-    .filter((person) => person.communityId === currentEventId)
-    .filter(
-      (person) =>
-        (person.firstName &&
-          person.firstName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (person.lastName &&
-          person.lastName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (person.title &&
-          person.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (person.companyName &&
-          person.companyName.toLowerCase().includes(searchTerm.toLowerCase()))
+  // Filtrar todas as pessoas
+  const filteredPeople = people.filter((person) => {
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    return (
+      (person.firstName &&
+        person.firstName.toLowerCase().includes(lowerCaseSearchTerm)) ||
+      (person.lastName &&
+        person.lastName.toLowerCase().includes(lowerCaseSearchTerm)) ||
+      (person.title &&
+        person.title.toLowerCase().includes(lowerCaseSearchTerm)) ||
+      (person.companyName &&
+        person.companyName.toLowerCase().includes(lowerCaseSearchTerm))
     );
+  });
 
+  // Paginar os resultados filtrados
   const totalPages = Math.ceil(filteredPeople.length / itemsPerPage);
   const paginatedPeople = filteredPeople.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const handleCheckIn = (id) => {
-    Meteor.call('people.checkIn', id, (error) => {
-      if (error) {
-        console.error(error);
-      }
-    });
-  };
-
-  const handleCheckOut = (id) => {
-    Meteor.call('people.checkOut', id, (error) => {
-      if (error) {
-        console.error(error);
-      }
-    });
-  };
-
   const formatDate = (date) =>
     date ? format(new Date(date), 'MM/dd/yyyy, HH:mm') : 'N/A';
 
   const onPageChange = (page) => setCurrentPage(page);
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Redefinir para a primeira página
+  };
+
   return (
-    <div className="overflow-x-auto">
+    <div className="flex max-w-screen-2xl flex-col gap-5 overflow-x-auto">
       <TextInput
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        id="email1"
-        type="email"
-        placeholder="name@flowbite.com"
+        onChange={handleSearchChange}
+        id="searchFilter"
+        placeholder="Type the name, title or company"
+        icon={MagnifyingGlassIcon}
       />
       <Table>
         <Table.Head>
@@ -96,7 +90,7 @@ const PeopleList = ({ people, currentEventId }) => {
           ))}
         </Table.Body>
       </Table>
-      <div className="mt-4 flex justify-center">
+      <div className="flex justify-center">
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
@@ -106,5 +100,3 @@ const PeopleList = ({ people, currentEventId }) => {
     </div>
   );
 };
-
-export { PeopleList };

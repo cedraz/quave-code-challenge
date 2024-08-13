@@ -1,11 +1,13 @@
 import React from 'react';
-import { Button, Dropdown } from 'flowbite-react';
+
+// Components
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
+import { Button, Dropdown } from 'flowbite-react';
 
 const SelectButton = React.forwardRef(({ communityName, ...props }, ref) => (
   <Button
     ref={ref}
-    className="h-fit rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+    className="h-fit rounded bg-primary-quaveColor px-4 py-2 font-bold text-white hover:bg-primary-quaveColor"
     {...props}
   >
     {communityName || 'Select an event'}
